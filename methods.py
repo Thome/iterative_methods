@@ -1,5 +1,6 @@
 import numpy as np
 from math import sqrt
+from scipy.linalg import svd
 # A = [[a11, a12],[a21, a22]] mxn
 # A[row] = [a21, a22]
 # x = [x1, x2]
@@ -122,6 +123,18 @@ def gauss_spectral(A):
     spectral = max(np.absolute(w))
     print("Spectral: ", spectral)
 
+def find_svd(A):
+    print(A)
+    U, s, VT = svd(A)
+    m,n = A.shape
+    if (m!=n):
+        Sigma = np.zeros(A.shape)
+        Sigma[:A.shape[1], :A.shape[1]] = np.diag(s)
+    else:
+        Sigma = diag(s)
+    B = U.dot(Sigma.dot(VT))
+    print(B)
+
 def print_result(result):
     for i in range(len(result)):
         print(round(result[i],6))
@@ -171,8 +184,13 @@ T1 = np.array([[1., 0., 0.],
                [0., 2., 0.],
                [0., 0., 3.]])
 
-jacobi_spectral(A)
-gauss_spectral(A)
+T2 = np.array([[1, 1], [0, 1], [1, 0]])
+T3 = np.array([[1,0],[0,sqrt(2)],[0,sqrt(2)]])
+
+find_svd(T3)
+
+#jacobi_spectral(A)
+#gauss_spectral(A)
 '''
 [0.  0.  0.  0.70710678 1. 0.  0. 0.]
 [0.  0.  0.  0.70710678 0. 0.  0. 0.]
