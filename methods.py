@@ -1,11 +1,7 @@
 import numpy as np
 from math import sqrt
 from scipy.linalg import svd
-# A = [[a11, a12],[a21, a22]] mxn
-# A[row] = [a21, a22]
-# x = [x1, x2]
-# b = [b1, b2]
-# XO = [xo1, xo2] 
+
 def jacobi(n,A,b,XO,TOL,N_iter):
     k = 1
     x = np.array([0]*XO.size,dtype=float)
@@ -123,8 +119,8 @@ def gauss_spectral(A):
     spectral = max(np.absolute(w))
     print("Spectral: ", spectral)
 
-def find_svd(A):
-    print(A)
+def use_svd(A):
+    #print(A)
     U, s, VT = svd(A)
     m,n = A.shape
     if (m!=n):
@@ -133,7 +129,8 @@ def find_svd(A):
     else:
         Sigma = diag(s)
     B = U.dot(Sigma.dot(VT))
-    print(B)
+    return U, Sigma, VT
+    #print(B)
 
 def print_result(result):
     for i in range(len(result)):
@@ -153,28 +150,52 @@ b = np.array([0,0,0,0,0,10000,0,0])
 XO = np.array([0,0,0,0,0,0,0,0],dtype=float)
 TOL = 0.01
 N_iter = 150
-'''
+
 result = jacobi(n,A,b,XO,TOL,N_iter)
-print("Jacobi: ")
-print_result(result)
+print_result(result) #Imprime o resultado de Jacobi
+# Resultado: 
+#-0.002651
+#-6339.744637
+#-3660.255363
+#-8965.752847
+#6339.748258
+#10000.0
+#-7320.506545
+#6339.748258
 
 XO = np.array([0,0,0,0,0,0,0,0],dtype=float)
 result = gauss_seidel(n,A,b,XO,TOL,N_iter)
-print("Gauss Seidel: ")
-print_result(result)
+print_result(result) #Imprime o resultado de Gauss
+# Resultado:
+#0.003621
+#-6339.744637
+#-3660.253273
+#-8965.755804
+#6339.744637
+#10000.0
+#-7320.508959
+#6339.746727
 
 XO = np.array([0,0,0,0,0,0,0,0],dtype=float)
 w = 1.25
 result = SQR(n,A,b,XO,w,TOL,N_iter)
-print("SQR (w = 1.25): ")
-print(result)
+print(result) #Imrpime o resultado de SQR (w = 1.25)
+# Resultado:
+#Maximum number of iterations exceeded
 
 XO = np.array([0,0,0,0,0,0,0,0],dtype=float)
 w = 1.1
 result = SQR(n,A,b,XO,w,TOL,N_iter)
-print("SQR (w = 1.1): ")
-print_result(result)
-'''
+print_result(result) #Imrpime o resultado de SQR (w = 1.1)
+# Resultado:
+#0.004513
+#-6339.744528
+#-3660.253012
+#-8965.756173
+#6339.743759
+#10000.0
+#-7320.509545
+#6339.747539
 
 T = np.array([[5,-1,3],
               [2,-8,1],
@@ -184,19 +205,22 @@ T1 = np.array([[1., 0., 0.],
                [0., 2., 0.],
                [0., 0., 3.]])
 
-T2 = np.array([[1, 1], [0, 1], [1, 0]])
-T3 = np.array([[1,0],[0,sqrt(2)],[0,sqrt(2)]])
+jacobi_spectral(A) #Para achar o raio espectral segundo Jacobi
+#Spectral:  0.7598356856515925 
+gauss_spectral(A) #Para achar o raio espectral segundo Gauss
+#Spectral:  0.5773502691896258
 
-find_svd(T3)
+T2 = np.array([[1,0],[0,sqrt(2)],[0,sqrt(2)]])
+U, Sigma, VT = use_svd(T2)
+print(U)
+#[[ 0.          1.          0.        ]
+# [-0.70710678  0.         -0.70710678]
+# [-0.70710678  0.          0.70710678]]
+print(Sigma)
+#[[2. 0.]
+# [0. 1.]
+# [0. 0.]]
 
-#jacobi_spectral(A)
-#gauss_spectral(A)
-'''
-[0.  0.  0.  0.70710678 1. 0.  0. 0.]
-[0.  0.  0.  0.70710678 0. 0.  0. 0.]
-[0.  0.  0.  0.  0.  0.  0.5 0. ]
-[0. 0.  0.  0.  0. -0.70710678  -0.35355339  0.]
-[0. 0. 0. 0. 0. 0. 0. 1.]
-[0. 0. 0. 0. 0. 0. 0. 0.]
-[0. 0. 0. 0.61237244 0. 0. 0. 0.]
-[0. 0. 0. 0. 0. 0. -0.8660254  0.]'''
+print(VT)
+#[[-0. -1.]
+# [ 1.  0.]]
