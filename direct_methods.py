@@ -1,4 +1,5 @@
 import numpy as np
+from math import sqrt
 
 def LU(A):
 	n = A.shape[1]
@@ -6,7 +7,7 @@ def LU(A):
 	U = np.zeros((n,n))
 	for k in range(n):
 		for j in range(k,n):
-			U[k,j] = A[i,j]
+			U[k,j] = A[k,j]
 			for s in range(k):
 				U[k,j] = U[k,j] - L[k,s]*U[s,j]
 		for i in range(k+1,n):
@@ -16,43 +17,62 @@ def LU(A):
 			L[i,k] = L[i,k]/U[k,k]
 	return L, U
 
+def cholesky(A):
+  n = A.shape[1]
+  H = np.tril(A)
+  for k in range(n-1):
+    H[k,k] = sqrt(H[k,k])
+    H[k+1:n,k] = H[k+1:n,k]/H[k,k]
+    for j in range(k+1,n):
+      H[j:n,j] = H[j:n,j]-H[j:n,k]*H[j,k]
+  H[n-1,n-1] = sqrt(H[n-1,n-1])
+  return H
+
 def qr(A):
-    m, n = A.shape
-    Q = np.eye(m)
-    for i in range(n - (m == n)):
-        H = np.eye(m)
-        H[i:, i:] = make_householder(A[i:, i])
-        Q = np.dot(Q, H)
-        A = np.dot(H, A)
-    return Q, A
- 
-def make_householder(a):
-    v = a / (a[0] + np.copysign(np.linalg.norm(a), a[0]))
-    v[0] = 1
-    H = np.eye(a.shape[0])
-    H -= (2 / np.dot(v, v)) * np.dot(v[:, None], v[None, :])
-    return H
+    n = A.shape[1]
+    Q = np.zeros((n,n))
+    R = np.zeros((n,n))
+    for k in range(n):
+      u = A[:,k]
+      for j in range(k):
+        u = u - np.dot(A[:,k],Q[:,j])*Q[:,j]
+      unorm = sqrt(np.sum(np.square(u)))
+      Q[:,k] = u/unorm
+      for j in range(k,n):
+        R[k,j] = np.dot(A[:,j],Q[:,k])
+    return Q,R
 
-def sor_solver(A, b, omega, initial_guess, convergence_criteria):
-  """
-  Entradas:
-    A: matriz nxn
-    b: vetor n dimensional
-    omega: relaxation factor
-    initial_guess: aproximação inicial
-  Returns:
-    phi: vetor solução n dimensional
-  """
-  phi = initial_guess[:]
-  residual = np.linalg.norm(np.matmul(A, phi) - b) #Initial residual
-  while residual > convergence_criteria:
-    for i in range(A.shape[0]):
-      sigma = 0
-      for j in range(A.shape[1]):
-        if j != i:
-          sigma += A[i][j] * phi[j]
-      phi[i] = (1 - omega) * phi[i] + (omega / A[i][i]) * (b[i] - sigma)
-    residual = np.linalg.norm(np.matmul(A, phi) - b)
-    print('Residual: {0:10.6g}'.format(residual))
-  return phi
+A_LU = np.array([[4,3],[6,3]],dtype=float)
+L, U = LU(A_LU)
 
+A_cho = np.array([[3,4,3],[4,8,6],[3,6,9]],dtype=float)
+H = cholesky(A_cho)
+
+A_qr = np.array([[12,-51,4],[6,167,-68],[-4,24,-41]],dtype=float)
+Q, R = qr(A_qr)
+
+print("\n========")
+print("DECOMPOSIÇÃO LU\n")
+print("MATRIZ A:")
+print(A_LU)
+print("\nMATRIZ L RESULTADO:")
+print(L)
+print("\nMATRIZ U RESULTADO:")
+print(U)
+
+print("\n========")
+print("DECOMPOSIÇÃO CHOLESKY\n")
+print("MATRIZ A:")
+print(A_cho)
+print("\nMATRIZ H RESULTADO:")
+print(H)
+
+
+print("\n========")
+print("DECOMPOSIÇÃO QR\n")
+print("MATRIZ A:")
+print(A_qr)
+print("\nMATRIZ Q RESULTADO:")
+print(Q)
+print("\nMATRIZ R RESULTADO:")
+print(R)
