@@ -2,7 +2,8 @@ import numpy as np
 from math import sqrt
 from scipy.linalg import svd
 
-def jacobi(n,A,b,XO,TOL,N_iter):
+def jacobi(A,b,XO,TOL,N_iter):
+    n = A.shape[1]
     k = 1
     x = np.array([0]*XO.size,dtype=float)
     while (k <= N_iter):
@@ -25,7 +26,8 @@ def jacobi(n,A,b,XO,TOL,N_iter):
     print("Maximum number of iterations exceeded")
     return 0
 
-def gauss_seidel(n,A,b,XO,TOL,N_iter):
+def gauss_seidel(A,b,XO,TOL,N_iter):
+    n = A.shape[1]
     k = 1
     x = np.array([0]*XO.size,dtype=float)
     while (k <= N_iter):
@@ -49,7 +51,8 @@ def gauss_seidel(n,A,b,XO,TOL,N_iter):
     print("Maximum number of iterations exceeded")
     return 0
 
-def SQR(n,A,b,XO,w,TOL,N_iter):
+def SQR(A,b,XO,w,TOL,N_iter):
+    n = A.shape[1]
     k = 1
     x = np.array([0]*XO.size,dtype=float)
     while (k <= N_iter):
@@ -136,7 +139,7 @@ def print_result(result):
     for i in range(len(result)):
         print(round(result[i],6))
 
-n = 8
+
 A = np.array([[-1,0,0,sqrt(2)/2,1,0,0,0],
             [0,-1,0,sqrt(2)/2,0,0,0,0],
             [0,0,-1,0,0,0,0.5,0],
@@ -151,7 +154,7 @@ XO = np.array([0,0,0,0,0,0,0,0],dtype=float)
 TOL = 0.01
 N_iter = 150
 
-result = jacobi(n,A,b,XO,TOL,N_iter)
+result = jacobi(A,b,XO,TOL,N_iter)
 print_result(result) #Imprime o resultado de Jacobi
 # Resultado: 
 #-0.002651
@@ -164,7 +167,7 @@ print_result(result) #Imprime o resultado de Jacobi
 #6339.748258
 
 XO = np.array([0,0,0,0,0,0,0,0],dtype=float)
-result = gauss_seidel(n,A,b,XO,TOL,N_iter)
+result = gauss_seidel(A,b,XO,TOL,N_iter)
 print_result(result) #Imprime o resultado de Gauss
 # Resultado:
 #0.003621
@@ -178,14 +181,14 @@ print_result(result) #Imprime o resultado de Gauss
 
 XO = np.array([0,0,0,0,0,0,0,0],dtype=float)
 w = 1.25
-result = SQR(n,A,b,XO,w,TOL,N_iter)
+result = SQR(A,b,XO,w,TOL,N_iter)
 print(result) #Imrpime o resultado de SQR (w = 1.25)
 # Resultado:
 #Maximum number of iterations exceeded
 
 XO = np.array([0,0,0,0,0,0,0,0],dtype=float)
 w = 1.1
-result = SQR(n,A,b,XO,w,TOL,N_iter)
+result = SQR(A,b,XO,w,TOL,N_iter)
 print_result(result) #Imrpime o resultado de SQR (w = 1.1)
 # Resultado:
 #0.004513
